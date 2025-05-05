@@ -2,18 +2,43 @@
   <h2>Lista de Veículos</h2>
 
   <div class="search-group">
-    <input
-      type="text"
-      placeholder="Digite para buscar veículo por placa, modelo, etc..."
-      [(ngModel)]="search"
-      (ngModelChange)="onSearchChange()"
-    />
-    <button class="add-btn" title="Adicionar veículo" (click)="openAddModal()">
-      ➕ Adicionar
+    <div class="search-wrapper">
+      <span class="search-icon">🔍</span>
+      <input
+        type="text"
+        placeholder="Digite para buscar veículo por placa, modelo, etc..."
+        [(ngModel)]="search"
+        (ngModelChange)="onSearchChange()"
+      />
+    </div>
+    <button
+      class="add-btn"
+      title="Adicionar veículo"
+      (click)="openAddModal()"
+      style="
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        font-size: 14px;
+        height: 40px;
+      "
+    >
+      <span class="material-icons" style="color: white; font-size: 24px"
+        >add</span
+      >
+      Adicionar
     </button>
   </div>
 
-  <div *ngIf="errorMessage" class="alert">{{ errorMessage }}</div>
+  <div *ngIf="successMessage" class="alert alert-success">
+    {{ successMessage }}
+    <button class="close-btn" (click)="closeSuccess()">✅</button>
+  </div>
+  <div *ngIf="errorMessage" class="error-notification">
+    <span>{{ errorMessage }}</span>
+    <button class="close-btn" (click)="closeError()">❌</button>
+  </div>
   <div *ngIf="isLoading" class="loader">Carregando veículos...</div>
 
   <div class="table-responsive" *ngIf="!isLoading && vehicles.length">
@@ -121,9 +146,70 @@
     Nenhum veículo encontrado.
   </div>
 
+  <div *ngIf="vehicleToEdit" class="edit-modal">
+    <h3>Editar Veículo</h3>
+    <form (ngSubmit)="updateVehicle()" class="edit-form">
+      <input
+        type="text"
+        [(ngModel)]="vehicleToEdit.placa"
+        name="placa"
+        placeholder="Placa"
+        required
+      />
+      <input
+        type="text"
+        [(ngModel)]="vehicleToEdit.chassi"
+        name="chassi"
+        placeholder="Chassi"
+      />
+      <input
+        type="text"
+        [(ngModel)]="vehicleToEdit.renavam"
+        name="renavam"
+        placeholder="Renavam"
+      />
+      <input
+        type="text"
+        [(ngModel)]="vehicleToEdit.modelo"
+        name="modelo"
+        placeholder="Modelo"
+      />
+      <input
+        type="text"
+        [(ngModel)]="vehicleToEdit.marca"
+        name="marca"
+        placeholder="Marca"
+      />
+      <input
+        type="text"
+        [(ngModel)]="vehicleToEdit.ano"
+        name="ano"
+        placeholder="Ano"
+      />
+
+      <div class="btn-group">
+        <button type="submit" class="ok-btn">💾 Salvar</button>
+        <button type="button" class="cancel-btn" (click)="cancelEdit()">
+          ❌ Cancelar
+        </button>
+      </div>
+    </form>
+  </div>
+
   <div class="pagination" *ngIf="!isLoading && lastPage > 1">
     <button (click)="prevPage()" [disabled]="page === 1">← Anterior</button>
-    <span>Página {{ page }} de {{ lastPage }}</span>
+    <span>
+      Página
+      <input
+        type="number"
+        [(ngModel)]="page"
+        [min]="1"
+        [max]="lastPage"
+        (ngModelChange)="goToPage(page)"
+        class="page-input"
+      />
+      de {{ lastPage }}
+    </span>
     <button (click)="nextPage()" [disabled]="page === lastPage">
       Próxima →
     </button>

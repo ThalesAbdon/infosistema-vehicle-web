@@ -15,6 +15,7 @@ export class VehicleListComponent implements OnInit {
   vehicles: Vehicle[] = [];
   isLoading = false;
   errorMessage: string | null = null;
+  successMessage: string | null = null;
 
   search = '';
   page = 1;
@@ -23,7 +24,7 @@ export class VehicleListComponent implements OnInit {
 
   vehicleToDelete: Vehicle | null = null;
   vehicleToEdit: Vehicle | null = null;
-  vehicleToAdd: Vehicle | null = null; // Novo veículo para adicionar
+  vehicleToAdd: Vehicle | null = null;
 
   private searchSubject = new Subject<string>();
 
@@ -52,6 +53,13 @@ export class VehicleListComponent implements OnInit {
   nextPage(): void {
     if (this.page < this.lastPage) {
       this.page++;
+      this.loadVehicles();
+    }
+  }
+
+  goToPage(page: number): void {
+    if (page >= 1 && page <= this.lastPage) {
+      this.page = page;
       this.loadVehicles();
     }
   }
@@ -99,19 +107,66 @@ export class VehicleListComponent implements OnInit {
   addVehicle(): void {
     if (!this.vehicleToAdd) return;
 
+    if (!this.vehicleToAdd.modelo) {
+      this.errorMessage = 'O campo Modelo é Obrigatório.';
+
+      setTimeout(() => {
+        this.closeError();
+      }, 5000);
+
+      return;
+    }
+
+    if (!this.vehicleToAdd.marca) {
+      this.errorMessage = 'O campo Marca é Obrigatório.';
+
+      setTimeout(() => {
+        this.closeError();
+      }, 5000);
+
+      return;
+    }
+
     this.vehicleService.addVehicle(this.vehicleToAdd).subscribe({
       next: () => {
-        this.loadVehicles(); // Recarrega a lista de veículos
-        this.vehicleToAdd = null; // Fecha o modal
+        this.loadVehicles();
+
+        this.successMessage = 'Veículo adicionado com sucesso!';
+
+        setTimeout(() => {
+          this.closeSuccess();
+        }, 5000);
+
+        this.vehicleToAdd = null;
       },
       error: (err) => {
+        if (err.error?.message.includes('Conflito nos campos')) {
+          this.errorMessage =
+            'Já cadastrado(s): ' +
+            err.error.message.split('Conflito nos campos:')[1]?.trim();
+        } else if (err.error?.message && Array.isArray(err.error.message)) {
+          this.errorMessage = err.error.message[0];
+        } else {
+          this.errorMessage = 'Erro ao adicionar veículo.';
+        }
+
+        setTimeout(() => {
+          this.closeError();
+        }, 7000);
+
         console.error('Erro ao adicionar veículo', err);
-        this.errorMessage = 'Erro ao adicionar veículo.';
       },
     });
   }
 
-  // Confirmação para deletar
+  closeError(): void {
+    this.errorMessage = null;
+  }
+
+  closeSuccess(): void {
+    this.successMessage = null;
+  }
+
   confirmDelete(vehicle: Vehicle): void {
     this.vehicleToDelete = vehicle;
   }
@@ -150,8 +205,6 @@ export class VehicleListComponent implements OnInit {
   }
 
   updateVehicle(): void {
-    console.log('🧪 updateVehicle chamado');
-
     if (!this.vehicleToEdit) return;
 
     const edited: Vehicle = this.vehicleToEdit;
@@ -159,12 +212,14 @@ export class VehicleListComponent implements OnInit {
 
     if (!id) {
       this.errorMessage = 'ID do veículo não encontrado!';
+      setTimeout(() => this.closeError(), 5000);
       return;
     }
 
     const original = this.vehicles.find((v) => v._id === id);
     if (!original) {
       this.errorMessage = 'Veículo original não encontrado.';
+      setTimeout(() => this.closeError(), 5000);
       return;
     }
 
@@ -176,7 +231,6 @@ export class VehicleListComponent implements OnInit {
       let newValue = edited[key];
       const oldValue = original[key];
 
-      // 📦 Forçar ano para number se for string
       if (key === 'ano' && typeof newValue === 'string') {
         newValue = parseInt(newValue, 10);
       }
@@ -214,15 +268,15 @@ export class VehicleListComponent implements OnInit {
     }
 
     if (Object.keys(cleanData).length === 0) {
-      console.log('⚠️ Nenhuma alteração detectada. Nada será enviado.');
       this.vehicleToEdit = null;
       return;
     }
 
-    console.log('🚀 Atualizando com payload limpo:', cleanData);
-
     this.vehicleService.updateVehicle(id, cleanData).subscribe({
       next: () => {
+        this.successMessage = 'Veículo atualizado com sucesso!';
+        setTimeout(() => this.closeSuccess(), 5000);
+
         this.vehicleToEdit = null;
         this.loadVehicles();
       },
@@ -231,6 +285,8 @@ export class VehicleListComponent implements OnInit {
         this.errorMessage = Array.isArray(err.error?.message)
           ? err.error.message.join('\n')
           : err.error?.message || 'Erro ao atualizar veículo.';
+
+        setTimeout(() => this.closeError(), 7000);
       },
     });
   }
