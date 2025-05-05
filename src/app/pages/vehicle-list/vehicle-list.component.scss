@@ -1,0 +1,384 @@
+.vehicle-list-wrapper {
+  max-width: 100%;
+  margin: 40px auto;
+  padding: 30px 20px;
+  min-height: calc(100vh - 80px);
+  box-sizing: border-box;
+  background-color: #fcf3d9;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04);
+  font-family: "Segoe UI", sans-serif;
+
+  h2 {
+    text-align: center;
+    font-size: 28px;
+    margin-bottom: 30px;
+    color: #000000;
+  }
+
+  .search-group {
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 10px;
+
+    input {
+      width: 100%;
+      max-width: 600px;
+      padding: 12px 16px;
+      border: 1px solid #dddddd;
+      border-radius: 6px;
+      font-size: 15px;
+      background-color: #fff;
+      transition: 0.3s;
+
+      &::placeholder {
+        color: #999999;
+      }
+
+      &:focus {
+        border-color: #ffc85e;
+        outline: none;
+      }
+    }
+
+    .add-btn {
+      padding: 12px 20px;
+      background-color: #28a745;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 18px;
+      font-weight: 600;
+      margin-left: 5px;
+      transition: background-color 0.3s, transform 0.2s;
+
+      &:hover {
+        background-color: #218838;
+        transform: scale(1.05);
+      }
+
+      &:focus {
+        outline: none;
+      }
+    }
+  }
+
+  .alert {
+    background-color: #fff3cd;
+    color: #856404;
+    padding: 14px;
+    border-radius: 6px;
+    text-align: center;
+    border: 1px solid #ffeeba;
+    font-weight: 500;
+    margin-bottom: 20px;
+  }
+
+  .loader {
+    text-align: center;
+    font-size: 16px;
+    font-weight: 500;
+    color: #666;
+    padding: 20px;
+  }
+
+  .table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .vehicle-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    background-color: #ffffff;
+
+    th,
+    td {
+      padding: 14px 16px;
+      text-align: center;
+      border-bottom: 1px solid #dddddd;
+      white-space: normal;
+    }
+
+    th {
+      background-color: #ffc85e;
+      color: #000000;
+      font-weight: 700;
+      font-size: 13px;
+      text-transform: uppercase;
+    }
+
+    tr:hover {
+      background-color: #fff8e5;
+    }
+
+    th:last-child,
+    td:last-child {
+      text-align: center;
+    }
+  }
+
+  .delete-btn {
+    background: transparent;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    transition: transform 0.2s;
+
+    &:hover {
+      transform: scale(1.2);
+      color: red;
+    }
+  }
+
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-top: 32px;
+    text-align: center;
+
+    button {
+      padding: 10px 18px;
+      background-color: #ffc85e;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background-color 0.2s ease, transform 0.2s ease;
+
+      &:hover:not(:disabled) {
+        background-color: #e6b450;
+        transform: scale(1.05);
+      }
+
+      &:disabled {
+        background-color: #dddddd;
+        cursor: not-allowed;
+        transform: none;
+      }
+    }
+
+    span {
+      font-size: 15px;
+      font-weight: 500;
+      color: #333333;
+      background-color: #fff7e0;
+      border: 1px solid #ffc85e;
+      padding: 8px 14px;
+      border-radius: 6px;
+      min-width: 120px;
+    }
+  }
+}
+
+.edit-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #ffffff;
+  border: 1px solid #ddd;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  padding: 24px;
+  border-radius: 10px;
+  z-index: 1000;
+  text-align: center;
+  width: 320px;
+  max-width: 95%;
+
+  h3 {
+    margin-bottom: 16px;
+    font-size: 18px;
+    color: #333;
+  }
+
+  .edit-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    input {
+      padding: 10px 14px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+
+      &:focus {
+        border-color: #ffc85e;
+        outline: none;
+      }
+
+      &::placeholder {
+        color: #999;
+      }
+    }
+
+    .btn-group {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 16px;
+
+      button {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 6px;
+        font-size: 14px;
+        cursor: pointer;
+      }
+
+      .ok-btn {
+        background-color: #ffc85e;
+        color: #000;
+      }
+
+      .cancel-btn {
+        background-color: #dddddd;
+      }
+
+      button:hover {
+        opacity: 0.85;
+      }
+    }
+  }
+}
+
+.confirm-box {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #ffffff;
+  border: 1px solid #ddd;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  padding: 24px;
+  border-radius: 10px;
+  z-index: 1000;
+  text-align: center;
+  max-width: 90%;
+  width: 320px;
+
+  p {
+    margin-bottom: 16px;
+    font-size: 16px;
+    color: #333;
+  }
+
+  .btn-group {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+
+    .ok-btn,
+    .cancel-btn {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 6px;
+      font-size: 18px;
+      cursor: pointer;
+      transition: 0.2s ease;
+
+      &.ok-btn {
+        background-color: #ffc85e;
+      }
+
+      &.cancel-btn {
+        background-color: #dddddd;
+      }
+
+      &:hover {
+        opacity: 0.8;
+      }
+    }
+  }
+}
+
+/* 🔽 Responsividade */
+
+@media (max-width: 1100px) {
+  .vehicle-list-wrapper {
+    padding: 20px;
+
+    h2 {
+      font-size: 24px;
+    }
+
+    .vehicle-table {
+      font-size: 14px;
+
+      th,
+      td {
+        padding: 10px;
+        font-size: 13px;
+      }
+    }
+
+    .search-group input {
+      font-size: 14px;
+    }
+
+    .pagination {
+      gap: 12px;
+
+      button {
+        padding: 8px 14px;
+        font-size: 13px;
+      }
+
+      span {
+        font-size: 13px;
+        padding: 6px 10px;
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .vehicle-list-wrapper {
+    padding: 15px 10px;
+    margin: 0 5px;
+
+    h2 {
+      font-size: 20px;
+    }
+
+    .search-group {
+      padding: 0;
+
+      input {
+        font-size: 14px;
+        padding: 10px 12px;
+      }
+    }
+
+    .vehicle-table th,
+    .vehicle-table td {
+      padding: 8px;
+      font-size: 12px;
+      white-space: normal;
+    }
+
+    .pagination {
+      flex-direction: column;
+      gap: 10px;
+
+      button,
+      span {
+        width: 100%;
+        max-width: 280px;
+      }
+
+      span {
+        font-size: 14px;
+      }
+    }
+  }
+}

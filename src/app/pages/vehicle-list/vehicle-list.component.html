@@ -1,0 +1,131 @@
+<div class="vehicle-list-wrapper">
+  <h2>Lista de Veículos</h2>
+
+  <div class="search-group">
+    <input
+      type="text"
+      placeholder="Digite para buscar veículo por placa, modelo, etc..."
+      [(ngModel)]="search"
+      (ngModelChange)="onSearchChange()"
+    />
+    <button class="add-btn" title="Adicionar veículo" (click)="openAddModal()">
+      ➕ Adicionar
+    </button>
+  </div>
+
+  <div *ngIf="errorMessage" class="alert">{{ errorMessage }}</div>
+  <div *ngIf="isLoading" class="loader">Carregando veículos...</div>
+
+  <div class="table-responsive" *ngIf="!isLoading && vehicles.length">
+    <table class="vehicle-table">
+      <thead>
+        <tr>
+          <th>Placa</th>
+          <th>Chassi</th>
+          <th>Renavam</th>
+          <th>Modelo</th>
+          <th>Marca</th>
+          <th>Ano</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let v of vehicles">
+          <td>{{ v.placa }}</td>
+          <td>{{ v.chassi }}</td>
+          <td>{{ v.renavam }}</td>
+          <td>{{ v.modelo }}</td>
+          <td>{{ v.marca }}</td>
+          <td>{{ v.ano }}</td>
+          <td>
+            <button
+              class="edit-btn"
+              title="Editar veículo"
+              (click)="openEditModal(v)"
+            >
+              ✏️
+            </button>
+
+            <button
+              class="delete-btn"
+              title="Excluir veículo"
+              (click)="confirmDelete(v)"
+            >
+              🗑️
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div *ngIf="vehicleToDelete" class="confirm-box">
+    <p>Tem certeza que deseja deletar esse veículo?</p>
+    <div class="btn-group">
+      <button class="ok-btn" (click)="deleteVehicle()">✅</button>
+      <button class="cancel-btn" (click)="cancelDelete()">❌</button>
+    </div>
+  </div>
+
+  <div *ngIf="vehicleToAdd" class="edit-modal">
+    <h3>Adicionar Veículo</h3>
+    <form (ngSubmit)="addVehicle()" class="edit-form">
+      <input
+        type="text"
+        [(ngModel)]="vehicleToAdd.placa"
+        name="placa"
+        placeholder="Placa"
+        required
+      />
+      <input
+        type="text"
+        [(ngModel)]="vehicleToAdd.chassi"
+        name="chassi"
+        placeholder="Chassi"
+      />
+      <input
+        type="text"
+        [(ngModel)]="vehicleToAdd.renavam"
+        name="renavam"
+        placeholder="Renavam"
+      />
+      <input
+        type="text"
+        [(ngModel)]="vehicleToAdd.modelo"
+        name="modelo"
+        placeholder="Modelo"
+      />
+      <input
+        type="text"
+        [(ngModel)]="vehicleToAdd.marca"
+        name="marca"
+        placeholder="Marca"
+      />
+      <input
+        type="number"
+        [(ngModel)]="vehicleToAdd.ano"
+        name="ano"
+        placeholder="Ano"
+      />
+
+      <div class="btn-group">
+        <button type="submit" class="ok-btn">💾 Salvar</button>
+        <button type="button" class="cancel-btn" (click)="cancelAdd()">
+          ❌ Cancelar
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div *ngIf="!isLoading && vehicles.length === 0" class="no-data">
+    Nenhum veículo encontrado.
+  </div>
+
+  <div class="pagination" *ngIf="!isLoading && lastPage > 1">
+    <button (click)="prevPage()" [disabled]="page === 1">← Anterior</button>
+    <span>Página {{ page }} de {{ lastPage }}</span>
+    <button (click)="nextPage()" [disabled]="page === lastPage">
+      Próxima →
+    </button>
+  </div>
+</div>
