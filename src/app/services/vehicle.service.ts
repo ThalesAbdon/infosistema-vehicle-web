@@ -1,6 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface Vehicle {
   _id?: string;
@@ -24,7 +25,7 @@ export interface VehicleListResponse {
   providedIn: 'root',
 })
 export class VehicleService {
-  private apiUrl = 'http://localhost:3000/vehicles';
+  private apiUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) {}
 
